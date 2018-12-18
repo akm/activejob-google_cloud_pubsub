@@ -35,7 +35,7 @@ RSpec.configure do |config|
     begin
       Timeout.timeout 10 do
         pipe.each do |line|
-          break if line.include?('INFO: Server started')
+          break if line.include?('Server started, listening on')
 
           raise line if line.include?('Exception in thread')
         end
