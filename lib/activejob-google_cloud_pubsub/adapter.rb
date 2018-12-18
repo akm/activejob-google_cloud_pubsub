@@ -9,15 +9,19 @@ module ActiveJob
     class Adapter
       using PubsubExtension
 
-      def initialize(async: true, pubsub: Google::Cloud::Pubsub.new, logger: Logger.new($stdout))
+      def initialize(async: true, pubsub: nil, logger: Logger.new($stdout))
         @executor = async ? :io : :immediate
         @pubsub   = pubsub
         @logger   = logger
       end
 
+      def pubsub
+        @pubsub ||= Google::Cloud::Pubsub.new
+      end
+
       def enqueue(job, attributes = {})
         Concurrent::Promise.execute(executor: @executor) {
-          @pubsub.topic_for(job.queue_name).publish JSON.dump(job.serialize), attributes
+          pubsub.topic_for(job.queue_name).publish JSON.dump(job.serialize), attributes
         }.rescue {|e|
           @logger&.error e
         }
