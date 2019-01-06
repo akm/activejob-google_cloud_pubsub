@@ -55,7 +55,10 @@ RSpec.configure do |config|
   end
 
   def gcloud_path
-    bin_path = File.join('google-cloud-sdk', 'bin')
-    Dir.exist?(bin_path) ? File.join(bin_path, 'gcloud') : 'gcloud'
+    @gcloud_path ||=
+      begin
+        bin_path = File.join('google-cloud-sdk', 'bin')
+        Dir.exist?(bin_path) ? File.join(bin_path, 'gcloud') : 'gcloud'
+      end
   end
 end
