@@ -1,14 +1,13 @@
 # ActiveJob::GoogleCloudPubsub
 
-[![Build Status](https://travis-ci.org/ursm/activejob-google_cloud_pubsub.svg?branch=master)](https://travis-ci.org/ursm/activejob-google_cloud_pubsub)
-[![Gem Version](https://badge.fury.io/rb/activejob-google_cloud_pubsub.svg)](https://badge.fury.io/rb/activejob-google_cloud_pubsub)
+[![Build Status](https://travis-ci.org/akm/activejob-google_cloud_pubsub.svg?branch=master)](https://travis-ci.org/akm/activejob-google_cloud_pubsub)
 
 Google Cloud Pub/Sub adapter and worker for ActiveJob
 
 ## Installation
 
 ```ruby
-gem 'activejob-google_cloud_pubsub'
+gem 'activejob-google_cloud_pubsub', git: 'https://github.com/akm/activejob-google_cloud_pubsub.git'
 ```
 
 ## Usage
@@ -132,7 +131,7 @@ $ bundle exec rake spec
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/ursm/activejob-google_cloud_pubsub.
+Bug reports and pull requests are welcome on GitHub at https://github.com/akm/activejob-google_cloud_pubsub.
 
 ## License
 
