@@ -13,12 +13,13 @@ module ActiveJob
 
       using PubsubExtension
 
-      def initialize(queue: 'default', min_threads: 0, max_threads: Concurrent.processor_count, pubsub: Google::Cloud::Pubsub.new, logger: Logger.new($stdout))
+      def initialize(queue: 'default', min_threads: 0, max_threads: Concurrent.processor_count, pubsub: Google::Cloud::Pubsub.new, logger: Logger.new($stdout), on_error: 'acknowledge')
         @queue_name  = queue
         @min_threads = min_threads
         @max_threads = max_threads
         @pubsub      = pubsub
         @logger      = logger
+        @on_error    = on_error
       end
 
       def run
@@ -92,14 +93,17 @@ module ActiveJob
         ensure
           delay_timer.shutdown
 
-          if succeeded || failed
-            message.acknowledge!
+          action = succeeded ? 'acknowledge' : failed ? @on_error : 'reject'
 
+          case action
+          when 'acknowledge'
+            message.acknowledge!
             @logger&.info "Message(#{message.message_id}) was acknowledged."
-          else
-            # terminated from outside
-            message.delay! 0
+          when 'reject'
+            message.reject!
+            @logger&.info "Message(#{message.message_id}) was rejected."
           end
+
         end
       end
     end
