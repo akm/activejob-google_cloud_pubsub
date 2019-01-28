@@ -30,18 +30,18 @@ RSpec.configure do |config|
   private
 
   def run_pubsub_emulator(&block)
-    pipe = IO.popen('gcloud beta emulators pubsub start', err: %i(child out), pgroup: true)
+    pipe = IO.popen("#{gcloud_path} beta emulators pubsub start", err: %i(child out), pgroup: true)
 
     begin
       Timeout.timeout 10 do
         pipe.each do |line|
-          break if line.include?('INFO: Server started')
+          break if line.include?('Server started, listening on')
 
           raise line if line.include?('Exception in thread')
         end
       end
 
-      host = `gcloud beta emulators pubsub env-init`.match(/^export PUBSUB_EMULATOR_HOST=(\S+)$/).captures.first
+      host = `#{gcloud_path} beta emulators pubsub env-init`.match(/^export PUBSUB_EMULATOR_HOST=(\S+)$/).captures.first
 
       block.call host
     ensure
@@ -52,5 +52,13 @@ RSpec.configure do |config|
         # already terminated
       end
     end
+  end
+
+  def gcloud_path
+    @gcloud_path ||=
+      begin
+        bin_path = File.join('google-cloud-sdk', 'bin')
+        Dir.exist?(bin_path) ? File.join(bin_path, 'gcloud') : 'gcloud'
+      end
   end
 end
